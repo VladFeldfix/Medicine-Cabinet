@@ -231,6 +231,12 @@ from reportlab.lib import colors
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+from datetime import datetime
+
 def generate_inventory_pdf():
     cursor.execute("SELECT id, barcode, name, description, exp_date FROM inventory ORDER BY name ASC")
     data = cursor.fetchall()
@@ -239,11 +245,19 @@ def generate_inventory_pdf():
     elements = []
     styles = getSampleStyleSheet()
 
+    # Title
     elements.append(Paragraph("Inventory Report", styles['Title']))
+    elements.append(Spacer(1, 6))
+
+    # Add current date
+    current_date = datetime.now().strftime("Created on: %Y-%m-%d")
+    elements.append(Paragraph(current_date, styles['Normal']))
     elements.append(Spacer(1, 12))
 
+    # Table header
     table_data = [["ID", "Barcode", "Name", "Description", "Expiration Date"]]
 
+    # Table rows
     for row in data:
         exp_date = row[-1]
         try:
@@ -255,6 +269,7 @@ def generate_inventory_pdf():
         except:
             table_data.append([Paragraph(str(cell), styles['Normal']) for cell in row])
 
+    # Create table
     table = Table(table_data, repeatRows=1)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#024275')),  # DARKBLUE header

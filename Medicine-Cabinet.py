@@ -47,7 +47,7 @@ class MedicineCabinet:
     def setup_gui(self):
         # ------------------ GUI setup ------------------
         self.root = tk.Tk()
-        self.root.title("Medicine Cabinet Manager")
+        self.root.title("Medicine Cabinet Manager v1.0")
         icon = tk.PhotoImage(file="favicon.png")
         self.root.iconphoto(False, icon)
         self.root.geometry("1100x800")

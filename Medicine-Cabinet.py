@@ -379,7 +379,33 @@ class MedicineCabinet:
         self.database_action_load()
 
     def database_action_export(self):
-        pass
-    # endregion
+        # Create hidden Tkinter root window
+        root = tk.Tk()
+        root.withdraw()
+
+        # Ask user where to save the CSV file
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".csv",
+            filetypes=[("CSV files", "*.csv")],
+            title="Save Medicine Data As"
+        )
+
+        if not file_path:
+            messagebox.showwarning("Warning","Export cancelled!")
+            return
+
+        # Fetch all rows
+        self.cursor.execute("SELECT barcode, name, description FROM medicine")
+        rows = self.cursor.fetchall()
+
+        # Write to CSV manually
+        with open(file_path, 'w', encoding='utf-8') as file:
+            file.write("Barcode,Name,Description\n")
+            for row in rows:
+                line = ','.join(f'"{str(cell)}"' if ',' in str(cell) else str(cell) for cell in row)
+                file.write(line + '\n')
+
+        messagebox.showinfo("Info", f"Data exported successfully to {file_path}")
+        # endregion
 
 MedicineCabinet()
